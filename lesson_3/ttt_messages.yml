@@ -1,0 +1,35 @@
+welcome: "Welcome! You've entered a game of Tic Tac Toe, please enter your name."
+valid_name: "Please enter a valid name"
+greeting_name: |
+    Nice to meet you, %{name}!
+need_rules: 'Would you like to read the rules of the game before you start?'
+type_to_exit: |
+    "Type: 'y' when you are ready to play!"
+    
+rules: |
+    The first player to win 5 matches wins the whole game!
+    => Each match ends when either player fills in 3 consecutive spaces.
+    => These spaces may be vertically, horizontally, or diagonally 
+       consecutive.
+    => Your marker is an X and the computer's marker is an O.
+      
+player_markers:  "You're an X, Computer is an O."
+who_first: |
+    Decide who chooses the starting player: 
+    => Player: ('p')
+    => Computer: ('c')
+    => Computer decides: ('d')
+    
+valid_choice: "Sorry, that's not a valid choice"
+player_choose: | 
+    Who should go first? 
+    => Enter 'p' to choose yourself 
+    => Enter 'c' to let the computer go first."
+choose_position: "Choose a position to place a piece: %{square}:"
+winner: "%{winner} wins this round!"
+tie: "It's a tie!"
+current_score: "Player: %{player_score}, Computer: %{computer_score}, Tie: %{ties}"
+player_wins: 'Player has won this match!'
+computer_wins: 'Computer has won this match!'
+play_again?: 'Play again? (y or n)'
+goodbye: 'Thanks for playing Tic Tac Toe! Goodbye.'
