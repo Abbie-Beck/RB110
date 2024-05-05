@@ -275,7 +275,7 @@ loop do
   if score['Player'] == ROUNDS
     prompt(messages('player_wins'))
     break unless play_again?
-    
+
   elsif score['Computer'] == ROUNDS
     prompt(messages('computer_wins'))
     break unless play_again?
