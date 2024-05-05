@@ -258,7 +258,6 @@ def play_again?
   prompt(messages('play_again?'))
   answer = gets.chomp.downcase
   answer.start_with?('y')
-  clear_screen
 end
 
 # Main Game Code:
@@ -276,12 +275,12 @@ loop do
   if score['Player'] == ROUNDS
     prompt(messages('player_wins'))
     break unless play_again?
-
-    current_player = starting_player
+    
   elsif score['Computer'] == ROUNDS
     prompt(messages('computer_wins'))
     break unless play_again?
 
+    clear_screen
     current_player = starting_player
     score = { 'Player' => 0, 'Computer' => 0, 'Ties' => 0 }
   end
