@@ -1,6 +1,3 @@
-# frozen_string_literal: true
-
-require 'pry'
 require 'yaml'
 
 MESSAGES = YAML.load_file('ttt_messages.yml')
@@ -11,7 +8,7 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
-ROUNDS = 5
+WINNING_SCORE = 5
 
 def messages(message)
   MESSAGES[message]
@@ -25,27 +22,27 @@ def clear_screen
   (system 'clear') || (system 'cls')
 end
 
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+# rubocop:disable Metrics/AbcSize
 
-def display_board(brd)
+def display_board(board)
   clear_screen
   prompt(messages('player_markers'))
-  puts ''
+  puts ' '
   puts '     |     |'
-  puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
+  puts "  #{board[1]}  |  #{board[2]}  |  #{board[3]}"
   puts '     |     |'
   puts '-----+-----+-----'
   puts '     |     |'
-  puts "  #{brd[4]}  |  #{brd[5]}  |  #{brd[6]}"
+  puts "  #{board[4]}  |  #{board[5]}  |  #{board[6]}"
   puts '     |     |           1 | 2 | 3'
   puts '-----+-----+-----     ---+---+---'
   puts '     |     |           4 | 5 | 6'
-  puts "  #{brd[7]}  |  #{brd[8]}  |  #{brd[9]}       ---+---+---"
+  puts "  #{board[7]}  |  #{board[8]}  |  #{board[9]}       ---+---+---"
   puts '     |     |           7 | 8 | 9'
   puts ''
 end
 
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+# rubocop:enable Metrics/AbcSize
 
 def initialize_board
   new_board = {}
@@ -53,8 +50,8 @@ def initialize_board
   p new_board
 end
 
-def empty_squares(brd)
-  brd.keys.select { |num| brd[num] == INITIAL_MARKER }
+def empty_squares(board)
+  board.keys.select { |num| board[num] == INITIAL_MARKER }
 end
 
 def joiner(arr, delimiter = ', ', word = 'or')
@@ -72,45 +69,52 @@ def alternate_player(current_player)
   current_player == 'Player' ? 'Computer' : 'Player'
 end
 
-def player_places_piece!(brd)
+# rubocop:disable Metrics/AbcSize
+
+def player_places_piece!(board, scores)
   square = ''
   loop do
-    prompt format(messages('choose_position'), square: joiner(empty_squares(brd)))
+    prompt format(messages('current_score'), player_score: scores['Player'],
+                                             computer_score: scores['Computer'],
+                                             ties: scores['Ties'])
+    prompt format(messages('choose_box'), square: joiner(empty_squares(board)))
     square = gets.chomp.to_i
-    break if empty_squares(brd).include?(square)
+    break if empty_squares(board).include?(square)
 
     prompt(messages('valid_choice'))
   end
-  brd[square] = PLAYER_MARKER
+  board[square] = PLAYER_MARKER
 end
 
-def defense_offense(square, brd, marker)
+# rubocop:enable Metrics/AbcSize
+
+def defense_offense(square, board, marker)
   WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, brd, marker)
+    square = find_at_risk_square(line, board, marker)
     return square unless square.nil?
   end
   nil
 end
 
-def computer_places_piece!(brd)
+def computer_places_piece!(board)
   square = nil
 
-  square = defense_offense(square, brd, COMPUTER_MARKER)
+  square = defense_offense(square, board, COMPUTER_MARKER)
 
-  square ||= defense_offense(square, brd, PLAYER_MARKER)
+  square ||= defense_offense(square, board, PLAYER_MARKER)
 
-  square = 5 if !square && brd[5] == INITIAL_MARKER
+  square = 5 if !square && board[5] == INITIAL_MARKER
 
-  square ||= empty_squares(brd).sample
+  square ||= empty_squares(board).sample
 
-  brd[square] = COMPUTER_MARKER
+  board[square] = COMPUTER_MARKER
 end
 
-def place_piece!(brd, current_player)
+def place_piece!(board, current_player, scores)
   if current_player == 'Player'
-    player_places_piece!(brd)
+    player_places_piece!(board, scores)
   else
-    computer_places_piece!(brd)
+    computer_places_piece!(board)
   end
 end
 
@@ -126,46 +130,46 @@ def find_at_risk_square(line, board, marker)
   risk_guard(line, board) if at_risk(line, board, marker)
 end
 
-def board_full?(brd)
-  empty_squares(brd).empty?
+def board_full?(board)
+  empty_squares(board).empty?
 end
 
-def someone_won?(brd)
-  !!detect_winner(brd)
+def someone_won?(board)
+  !!detect_winner(board)
 end
 
-def detect_winner(brd)
+def detect_winner(board)
   WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 3
+    if board.values_at(*line).count(PLAYER_MARKER) == 3
       return 'Player'
-    elsif brd.values_at(*line).count(COMPUTER_MARKER) == 3
+    elsif board.values_at(*line).count(COMPUTER_MARKER) == 3
       return 'Computer'
     end
   end
   nil
 end
 
-def keeping_score(winner, score)
+def keeping_score(winner, scores)
   case winner
   when 'Player'
-    score['Player'] += 1
+    scores['Player'] += 1
   when 'Computer'
-    score['Computer'] += 1
+    scores['Computer'] += 1
   else
-    score['Ties'] += 1
+    scores['Ties'] += 1
   end
 end
 
-def display_score(score_hash)
-  prompt format(messages('current_score'), player_score: score_hash['Player'],
-                                           computer_score: score_hash['Computer'],
-                                           ties: score_hash['Ties'])
+def display_score(scores)
+  prompt format(messages('current_score'), player_score: scores['Player'],
+                                           computer_score: scores['Computer'],
+                                           ties: scores['Ties'])
   sleep 2
 end
 
-def display_winner(brd)
-  if someone_won?(brd)
-    prompt format(messages('winner'), winner: detect_winner(brd))
+def display_winner(board)
+  if someone_won?(board)
+    prompt format(messages('winner'), winner: detect_winner(board))
   else
     prompt(messages('tie'))
   end
@@ -185,42 +189,42 @@ def player_choose
   end
 end
 
-def who_chooses
+def prompt_who_chooses
   loop do
     prompt(messages('who_first'))
     answer = gets.chomp.downcase
-    return answer if %w[p c d].include?(answer)
+    return answer if %w(p c d).include?(answer)
 
     prompt(messages('valid_choice'))
   end
 end
 
 def starting_player
-  answer = who_chooses
+  answer = prompt_who_chooses
 
   case answer
-  when 'd' then player = %w[Player Computer].sample
+  when 'd' then player = %w(Player Computer).sample
   when 'c' then player = 'Computer'
   when 'p' then player = player_choose
   end
   player
 end
 
-def each_round(current_player, score_hash)
+def game_round_loop(current_player, scores)
   board = initialize_board
   loop do
     display_board(board)
-    place_piece!(board, current_player)
+    place_piece!(board, current_player, scores)
     current_player = alternate_player(current_player)
     display_board(board)
     break if someone_won?(board) || board_full?(board)
   end
 
   display_winner(board)
-  keeping_score(detect_winner(board), score_hash)
+  keeping_score(detect_winner(board), scores)
 end
 
-def ask_name
+def prompt_ask_name
   loop do
     prompt(messages('welcome'))
     name = gets.chomp.strip.capitalize
@@ -232,16 +236,16 @@ def ask_name
   name
 end
 
-def greeting
-  name = ask_name
+def display_greeting
+  name = prompt_ask_name
   prompt format(messages('greeting_name'), name: name)
 end
 
-def need_rules?
+def show_rules?
   prompt(messages('need_rules'))
   answer = gets.chomp.downcase
   clear_screen
-  rules_info if answer.start_with?('y')
+  answer.start_with?('y')
 end
 
 def rules_info
@@ -254,7 +258,11 @@ def rules_info
   end
 end
 
-def play_again?
+def display_rules
+  rules_info if show_rules?
+end
+
+def prompt_play_again?
   prompt(messages('play_again?'))
   answer = gets.chomp.downcase
   answer.start_with?('y')
@@ -262,27 +270,27 @@ end
 
 # Main Game Code:
 
-greeting
-need_rules?
+display_greeting
+display_rules
 clear_screen
-score = { 'Player' => 0, 'Computer' => 0, 'Ties' => 0 }
+scores = { 'Player' => 0, 'Computer' => 0, 'Ties' => 0 }
 current_player = starting_player
 
 loop do
-  each_round(current_player, score)
-  display_score(score)
+  game_round_loop(current_player, scores)
+  display_score(scores)
 
-  if score['Player'] == ROUNDS
+  if scores['Player'] == WINNING_SCORE
     prompt(messages('player_wins'))
-    break unless play_again?
+    break unless prompt_play_again?
 
-  elsif score['Computer'] == ROUNDS
+  elsif scores['Computer'] == WINNING_SCORE
     prompt(messages('computer_wins'))
-    break unless play_again?
+    break unless prompt_play_again?
 
     clear_screen
     current_player = starting_player
-    score = { 'Player' => 0, 'Computer' => 0, 'Ties' => 0 }
+    scores = { 'Player' => 0, 'Computer' => 0, 'Ties' => 0 }
   end
 end
 

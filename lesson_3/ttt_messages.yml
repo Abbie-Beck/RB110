@@ -8,24 +8,25 @@ type_to_exit: |
     
 rules: |
     The first player to win 5 matches wins the whole game!
-    => Each match ends when either player fills in 3 consecutive spaces.
-    => These spaces may be vertically, horizontally, or diagonally 
-       consecutive.
-    => Your marker is an X and the computer's marker is an O.
+    => Matches ends when one player fills in 3 consecutive spaces.
+    => Spaces may be vertically, horizontally, or diagonally consecutive.
+    => Player marker is an X and the computer's marker is an O.
       
 player_markers:  "You're an X, Computer is an O."
 who_first: |
-    Decide who chooses the starting player: 
-    => Player: ('p')
-    => Computer: ('c')
-    => Computer decides: ('d')
+    Decide who chooses the starting player:
     
+    => To choose for yourself type: ('p')
+    => To allow the computer to decide who starts, type : ('d')
+     
 valid_choice: "Sorry, that's not a valid choice"
 player_choose: | 
-    Who should go first? 
-    => Enter 'p' to choose yourself 
-    => Enter 'c' to let the computer go first."
-choose_position: "Choose a position to place a piece: %{square}:"
+    Which player do you want to go first?
+     
+    => Enter 'p' to go first
+    => Enter 'c' to let the computer go first.
+    
+choose_box: "Choose a position to place a piece: %{square}:"
 winner: "%{winner} wins this round!"
 tie: "It's a tie!"
 current_score: "Player: %{player_score}, Computer: %{computer_score}, Tie: %{ties}"
