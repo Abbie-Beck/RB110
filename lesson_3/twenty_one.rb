@@ -273,7 +273,7 @@ end
 
 def display_goodbye
   clear_screen
-  prompt(messages('goodbye'), name: name)
+  prompt(messages('goodbye'))
 end
 
 # main game code
