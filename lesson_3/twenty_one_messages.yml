@@ -1,0 +1,42 @@
+welcome: "Welcome to Twenty-One! Please enter your name:"
+valid_name: "Please enter a valid name"
+greeting_name: |
+    Nice to meet you, %{name}!
+need_rules: 'Would you like to read the rules of the game before you start?'
+type_to_exit: |
+    "Type: 'y' when you are ready to play!"
+    
+rules: |
+    The first player to win 5 rounds wins the match!
+    => The goal is to score as close to 21 as possible without going over.
+    => Each player is dealt two cards initially and must choose to "hit" or "stay".
+    => Hitting adds a new random card to your deck.
+    => Staying ends your turn for the round.
+      
+dealer_cards: "Dealer starts the game with %{dealer} and ?"
+player_cards: "You have: %{cards1} and %{cards2}, for a total of: %{total}."
+hit_or_stay: "Would you like to (h)it or (s)tay?"
+valid_move: "Sorry, must enter 'h' or 's'."
+player_hit: "You chose to hit!"
+player_cards_update: "Your cards are now: %{cards}"
+player_total: "Your total is now: %{total}"
+player_stayed: "You stayed at: %{score}"
+dealer_turn: "Dealer turn..."
+dealer_hits: "Dealer hits!"
+dealer_cards_update: "Dealer's cards are now: %{cards}"
+dealer_total: "Dealer total is now: %{total}."
+dealer_stayed: "Dealer stays at: %{score}."
+player_busted: "You busted! Dealer wins!"
+dealer_busted: "Dealer busted! You win!"
+player_wins: "You win!"
+dealer_wins: "Dealer wins!"
+tie: "It's a tie!"
+display_score: "Player Score: %{score1}; Dealer Score: %{score2}; Ties: %{ties}"
+player_wins_match: "Congratulations, you have beaten the dealer and won the match!"
+dealer_wins_match: "Sorry, the dealer has beaten you this time."
+bar: "=============="
+deal_score: "Dealer has: %{card} for a total of: %{total}"
+play_score: "Player has: %{card} for a total of: %{total}"
+bar2: "-------------"
+play_again?: "Do you want to play again? (y or n)"
+goodbye: "Thank you for playing Twenty-One! Good bye, %{name}!"
